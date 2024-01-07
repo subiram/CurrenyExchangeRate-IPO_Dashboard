@@ -5,32 +5,49 @@ import Login from './components/Login';
 import Registration from './components/Registration';
 import Dashboard from './components/Dashboard';
 import Logout from './components/Logout';
-import StockTableView from './components/StockTableView';
-import StockCardView from './components/StockCardView';
+import IpoCalendar from './components/IpoCalendar';
+import CurrencyExchangeRates from './components/CurrencyExchangeRates';
 import axios from 'axios';
 import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [stockData, setStockData] = useState([]);
+  const [ipoData, setIpoData] = useState([]);
+  const [exchangeRates, setExchangeRates] = useState([]);
 
   useEffect(() => {
-    const fetchStockData = async () => {
+    const fetchIpoData = async () => {
       try {
         const response = await axios.get(
-          'https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_58b64c13e456411d9558633db43b7400'
+          'https://api.iex.cloud/v1/data/CORE/UPCOMING_IPOS/market?token=pk_9cc55ff7bf2148acb10e7592795eaa07'
         );
 
-        const stocks = Object.values(response.data).map((stock) => stock.quote);
-        setStockData(stocks);
+        setIpoData(response.data);
       } catch (error) {
-        console.error('Error fetching stock data:', error);
+        console.error('Error fetching IPO data:', error);
       }
     };
 
-    fetchStockData();
+    fetchIpoData();
   }, []);
 
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await axios.get(
+          'https://api.iex.cloud/v1/fx/latest?symbols=USDCAD,GBPUSD,USDJPY&token=pk_9cc55ff7bf2148acb10e7592795eaa07'
+        );
+
+        setExchangeRates(response.data);
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+      }
+    };
+
+    fetchExchangeRates();
+  }, []);
+
+ 
   const handleLogin = (userData) => {
     setUser(userData);
   };
@@ -84,19 +101,19 @@ function App() {
           path="/dashboard"
           element={
             user ? (
-              <Dashboard user={user} onLogout={handleLogout} stocks={stockData} />
+              <Dashboard user={user} onLogout={handleLogout}  />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
         <Route
-          path="/dashboard/table"
-          element={<StockTableView stocks={stockData} />}
+         path="/dashboard/ipo-calendar"
+         element={<IpoCalendar ipoData={ipoData} />}
         />
         <Route
-          path="/dashboard/cards"
-          element={<StockCardView stocks={stockData} />}
+          path="/dashboard/exchange-rates"
+          element={<CurrencyExchangeRates exchangeRates={exchangeRates} />}
         />
         <Route
           path="/logout"

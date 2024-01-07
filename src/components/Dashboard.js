@@ -1,9 +1,6 @@
 // src/components/Dashboard.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import axios from 'axios';
-import StockTable from './StockTable';
-import StockCard from './StockCard';
 import './Dashboard.css';
 
 const Dashboard = ({ user }) => {
@@ -13,8 +10,8 @@ const Dashboard = ({ user }) => {
       <br/> 
       <br/>
       <nav className="dashboard-navigation">
-        <Link to="./table">Table View</Link>
-        <Link to="./cards">Card View</Link>
+        <Link to="./ipo-calendar">IPO Calendar</Link>
+        <Link to="./exchange-rates">Currency Exchange Rates</Link> 
       </nav>
 
       <div className="dashboard-content">
